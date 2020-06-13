@@ -6,5 +6,7 @@
     "lib": ["es6", "DOM"],
     "composite": true,
     "rootDir": "src"
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["__tests__/**/*.ts"]
 }
