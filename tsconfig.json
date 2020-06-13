@@ -3,6 +3,9 @@
   "references": [
     {
       "path": "./packages/core"
+    },
+    {
+      "path": "./packages/transporter"
     }
   ]
 }

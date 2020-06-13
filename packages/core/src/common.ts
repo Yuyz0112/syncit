@@ -1,11 +1,9 @@
-import { utils } from 'rrweb';
+import { utils, EventType, IncrementalSource } from 'rrweb';
 import { INode } from 'rrweb-snapshot';
 import {
   listenerHandler,
   inputValue,
   eventWithTime,
-  EventType,
-  IncrementalSource,
   Mirror,
 } from 'rrweb/typings/types';
 
