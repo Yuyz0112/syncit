@@ -246,3 +246,15 @@ export function applyMirrorAction(
       break;
   }
 }
+
+export const enum CustomEventTags {
+  Ping = 'Ping',
+  AcceptRemoteControl = 'AcceptRemoteControl',
+  StopRemoteControl = 'StopRemoteControl',
+  MouseSize = 'MouseSize',
+}
+
+export type DataPoint = {
+  x: number;
+  y: number;
+};

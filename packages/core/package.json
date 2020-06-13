@@ -19,7 +19,9 @@
     "url": "git+https://github.com/Yuyz0112/syncit.git"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc -b .",
+    "typings": "tsc -d --emitDeclarationOnly --declarationDir typings"
   },
   "bugs": {
     "url": "https://github.com/Yuyz0112/syncit/issues"
@@ -36,6 +38,8 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
+    "@syncit/transporter": "^0.1.0",
+    "@xstate/fsm": "^1.4.0",
     "rrweb": "/home/yanzhen/workspace/rrweb/rrweb"
   }
 }
