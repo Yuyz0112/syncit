@@ -1,0 +1,38 @@
+{
+  "name": "@syncit/core",
+  "version": "0.1.0",
+  "description": "syncit core modules",
+  "author": "Yanzhen Yu <yanzhen@smartx.com>",
+  "homepage": "https://github.com/Yuyz0112/syncit#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib",
+    "typings"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yuyz0112/syncit.git"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "bugs": {
+    "url": "https://github.com/Yuyz0112/syncit/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.0",
+    "@typescript-eslint/eslint-plugin": "^3.2.0",
+    "@typescript-eslint/parser": "^3.2.0",
+    "eslint": "^7.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.5"
+  }
+}

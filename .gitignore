@@ -1,0 +1,18 @@
+# local
+.vscode
+
+# log
+*.log
+*.log.*
+
+# dependencies
+node_modules
+
+# dist
+lib
+typings
+tsconfig.tsbuildinfo
+target
+
+# test
+coverage

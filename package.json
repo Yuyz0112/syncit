@@ -1,5 +1,7 @@
 {
   "name": "syncit",
+  "private": true,
+  "license": "MIT",
   "scripts": {
     "lerna": "lerna"
   },
