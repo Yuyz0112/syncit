@@ -1,6 +1,7 @@
 export enum TransporterEvents {
   SourceReady,
   MirrorReady,
+  Start,
   SendRecord,
   AckRecord,
   Stop,
@@ -15,8 +16,10 @@ export type TransporterEventHandler = (params: {
 export interface Transporter<T> {
   handlers: Record<TransporterEvents, Array<TransporterEventHandler>>;
 
+  login(): Promise<boolean>;
   sendSourceReady(): Promise<void>;
   sendMirrorReady(): Promise<void>;
+  sendStart(): Promise<void>;
   sendRecord(data: T): Promise<void>;
   ackRecord(id: number): Promise<void>;
   sendStop(): Promise<void>;

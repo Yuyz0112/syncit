@@ -38,6 +38,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "@syncit/core": "^0.1.0"
+    "@syncit/core": "^0.1.0",
+    "agora-rtm-sdk": "^1.2.2"
   }
 }

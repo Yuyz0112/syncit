@@ -16,13 +16,6 @@ export const createAppService = (onStop: () => void) => {
           idle: {
             on: {
               SOURCE_READY: {
-                target: 'source_ready',
-              },
-            },
-          },
-          source_ready: {
-            on: {
-              CONNECT: {
                 target: 'waiting_first_record',
               },
             },
@@ -184,9 +177,7 @@ export const createEmbedService = (context: EmbedContext) => {
       },
       {
         actions: {
-          start(context) {
-            context.transporter.sendSourceReady();
-          },
+          start() {},
           connect: assign(context => {
             const { record, buffer, transporter } = context;
             const stopRecord = record({

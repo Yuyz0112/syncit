@@ -10,6 +10,7 @@ export class LocalStorageTransporter<T> implements Transporter<T> {
   handlers: Record<TransporterEvents, Array<TransporterEventHandler>> = {
     [TransporterEvents.SourceReady]: [],
     [TransporterEvents.MirrorReady]: [],
+    [TransporterEvents.Start]: [],
     [TransporterEvents.SendRecord]: [],
     [TransporterEvents.AckRecord]: [],
     [TransporterEvents.Stop]: [],
@@ -31,6 +32,10 @@ export class LocalStorageTransporter<T> implements Transporter<T> {
     });
   }
 
+  login() {
+    return Promise.resolve(true);
+  }
+
   setItem(params: { event: TransporterEvents; payload?: unknown }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(params));
     // jest could not listen to storage event in JSDOM, not a big deal at here.
@@ -49,6 +54,13 @@ export class LocalStorageTransporter<T> implements Transporter<T> {
   sendMirrorReady() {
     this.setItem({
       event: TransporterEvents.MirrorReady,
+    });
+    return Promise.resolve();
+  }
+
+  sendStart() {
+    this.setItem({
+      event: TransporterEvents.Start,
     });
     return Promise.resolve();
   }

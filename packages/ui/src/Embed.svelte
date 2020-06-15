@@ -3,10 +3,8 @@
   import { onMount, onDestroy } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
-  import {
-    LocalStorageTransporter,
-    TransporterEvents,
-  } from '@syncit/transporter';
+  import { TransporterEvents } from '@syncit/transporter/lib/base';
+  import { AgoraRtmTransporter } from '@syncit/transporter/lib/agora-rtm';
   import {
     applyMirrorAction,
     SourceBuffer,
@@ -15,13 +13,20 @@
     RemoteControlActions,
     CustomEventTags,
   } from '@syncit/core';
+  import { nanoid } from 'nanoid';
   import Panel from './components/Panel.svelte';
   import Tag from './components/Tag.svelte';
   import Icon from './components/Icon.svelte';
 
-  const transporter = new LocalStorageTransporter();
+  let uid = nanoid(8);
 
-  let login = false;
+  const transporter = new AgoraRtmTransporter({
+    agora_app_id: '016149b89b524ce8b88cd11320bf4dd9',
+    uid,
+    role: 'embed',
+  });
+
+  let login = transporter.login();
   let ref;
   $: ref && document.body.appendChild(ref);
 
@@ -131,6 +136,9 @@
     });
 
     transporter.on(TransporterEvents.MirrorReady, () => {
+      transporter.sendSourceReady();
+    });
+    transporter.on(TransporterEvents.Start, () => {
       service.send('CONNECT');
     });
     transporter.on(TransporterEvents.AckRecord, ({ payload }) => {
@@ -190,16 +198,19 @@
       </div>
       {:else if current.matches('ready')}
       <div class="syncit-center syncit-load-text">
+        <div class="syncit-panel-meta">
+          UID: {uid}
+        </div>
         <div class="syncit-load-text">
           已启用，等待连接中
         </div>
-        <button
+        <!-- <button
           style="margin-top: 8px;"
           class="syncit-btn ordinary"
           on:click="{() => transporter.sendSourceReady()}"
         >
           重试
-        </button>
+        </button> -->
       </div>
       {:else if current.matches('connected')}
       <div class="syncit-center">
@@ -347,8 +358,14 @@
     flex: 1;
     width: 100%;
     align-items: flex-start;
-    border-bottom: 1px solid rgba(235, 239, 245, 0.6);
+    border-bottom: 1px solid rgba(235, 239, 245, 0.8);
     margin-bottom: 8px;
+  }
+
+  .syncit-panel-meta {
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(235, 239, 245, 0.8);
   }
 
   .syncit-block-els {

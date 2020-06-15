@@ -3,10 +3,8 @@
   import { Replayer, EventType, pack, mirror } from 'rrweb';
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
-  import {
-    LocalStorageTransporter,
-    TransporterEvents,
-  } from '@syncit/transporter';
+  import { TransporterEvents } from '@syncit/transporter/lib/base';
+  import { AgoraRtmTransporter } from '@syncit/transporter/lib/agora-rtm';
   import {
     MirrorBuffer,
     CustomEventTags,
@@ -21,8 +19,10 @@
   import LineChart from './components/LineChart.svelte';
   import Icon from './components/Icon.svelte';
 
-  const transporter = new LocalStorageTransporter();
-  let login = false;
+  let uid = '';
+
+  let transporter;
+  let login;
 
   let playerDom;
   let replayer;
@@ -48,25 +48,87 @@
   });
   let current = service.state;
 
-  const controlService = createAppControlService({
-    transporter,
-    replayer,
-  });
-  let controlCurrent = controlService.state;
+  let controlService;
+  let controlCurrent;
 
   let open = false;
 
-  function connect() {
-    service.send('CONNECT');
-    transporter.sendMirrorReady();
-    replayer = new Replayer([], {
-      root: playerDom,
-      loadTimeout: 100,
-      liveMode: true,
-      insertStyleRules: ['.syncit-embed { display: none !important }'],
-      showWarning: true,
-      showDebug: true,
+  function init() {
+    transporter = new AgoraRtmTransporter({
+      agora_app_id: '016149b89b524ce8b88cd11320bf4dd9',
+      uid,
+      role: 'app',
     });
+    login = (async () => {
+      await transporter.login();
+      await transporter.sendMirrorReady();
+    })();
+
+    transporter.on(TransporterEvents.SourceReady, () => {
+      service.send('SOURCE_READY');
+      replayer = new Replayer([], {
+        root: playerDom,
+        loadTimeout: 100,
+        liveMode: true,
+        insertStyleRules: ['.syncit-embed { display: none !important }'],
+        showWarning: true,
+        showDebug: true,
+      });
+
+      controlService = createAppControlService({
+        transporter,
+        replayer,
+      });
+      controlCurrent = controlService.state;
+
+      controlService.start();
+      controlService.subscribe(state => {
+        controlCurrent = state;
+      });
+
+      transporter.sendStart();
+    });
+
+    transporter.on(TransporterEvents.SendRecord, data => {
+      const { id, data: event, t } = data.payload;
+      if (!current.matches('connected')) {
+        replayer.startLive(event.timestamp - buffer.bufferMs);
+        service.send('FIRST_RECORD');
+      }
+      if (event.type === EventType.Custom) {
+        switch (event.data.tag) {
+          case CustomEventTags.Ping:
+            latencies = latencies.concat({ x: t, y: Date.now() - t });
+            break;
+          case CustomEventTags.MouseSize:
+            mouseSize = `syncit-mouse-s${event.data.payload.level}`;
+            break;
+          case CustomEventTags.AcceptRemoteControl:
+            controlService.send({
+              type: 'ACCEPTED',
+              payload: { replayer },
+            });
+            break;
+          case CustomEventTags.StopRemoteControl:
+            controlService.send('STOP_CONTROL');
+            break;
+          default:
+            break;
+        }
+      }
+      Promise.resolve().then(() => collectSize(t, JSON.stringify(event)));
+      buffer.addWithCheck({ id, data: event });
+      transporter.ackRecord(id);
+    });
+    transporter.on(TransporterEvents.Stop, () => {
+      service.send('STOP');
+    });
+  }
+
+  function reset() {
+    service.send('RESET');
+    login = undefined;
+    uid = '';
   }
 
   function normalizePoints(points) {
@@ -118,48 +180,6 @@
     service.subscribe(state => {
       current = state;
     });
-    controlService.start();
-    controlService.subscribe(state => {
-      controlCurrent = state;
-    });
-
-    transporter.on(TransporterEvents.SourceReady, () => {
-      service.send('SOURCE_READY');
-    });
-    transporter.on(TransporterEvents.SendRecord, data => {
-      const { id, data: event, t } = data.payload;
-      if (!current.matches('connected')) {
-        replayer.startLive(event.timestamp - buffer.bufferMs);
-        service.send('FIRST_RECORD');
-      }
-      if (event.type === EventType.Custom) {
-        switch (event.data.tag) {
-          case CustomEventTags.Ping:
-            latencies = latencies.concat({ x: t, y: Date.now() - t });
-            break;
-          case CustomEventTags.MouseSize:
-            mouseSize = `syncit-mouse-s${event.data.payload.level}`;
-            break;
-          case CustomEventTags.AcceptRemoteControl:
-            controlService.send({
-              type: 'ACCEPTED',
-              payload: { replayer },
-            });
-            break;
-          case CustomEventTags.StopRemoteControl:
-            controlService.send('STOP_CONTROL');
-            break;
-          default:
-            break;
-        }
-      }
-      Promise.resolve().then(() => collectSize(t, JSON.stringify(event)));
-      buffer.addWithCheck({ id, data: event });
-      transporter.ackRecord(id);
-    });
-    transporter.on(TransporterEvents.Stop, () => {
-      service.send('STOP');
-    });
   });
   onDestroy(() => {
     service.stop();
@@ -168,29 +188,37 @@
 </script>
 
 <div class="syncit-app {mouseSize}">
+  <div bind:this="{playerDom}"></div>
+  {#if current.matches('idle')}
+  <!---->
+  {#if !login}
+  <div class="syncit-center">
+    <div class="syncit-load-text syncit-hint align-center">
+      <label>
+        remote UID:
+        <input type="text" bind:value="{uid}" />
+      </label>
+      <button class="syncit-btn" on:click="{init}" disabled="{!uid}">
+        建立连接
+      </button>
+    </div>
+  </div>
+  {:else}
+  <!---->
   {#await login}
   <div class="syncit-load-text syncit-center">初始化中...</div>
   {:then}
   <!---->
-  <div bind:this="{playerDom}"></div>
-  {#if current.matches('idle')}
-  <div class="syncit-center">
-    <div class="syncit-load-text syncit-hint">
-      <h3>等待连接中</h3>
-      <div>源端点击“启用 syncit 分享”按钮，即可建立连接。</div>
-    </div>
-  </div>
-  {:else if current.matches('source_ready') ||
-  current.matches('waiting_first_record')}
-  <div class="syncit-center">
-    <button
-      class="syncit-btn"
-      on:click="{connect}"
-      disabled="{!current.matches('source_ready')}"
-    >
-      建立连接
-    </button>
-  </div>
+  {:catch error}
+  <div class="syncit-error syncit-center">{error.message}</div>
+  {/await}
+  <!---->
+  {/if}
+  <!---->
+  {/if}
+  <!---->
+  {#if current.matches('waiting_first_record')}
+  <div class="syncit-load-text syncit-center">等待连接中</div>
   {:else if current.matches('connected')}
   <div class="syncit-app-control">
     {#if open}
@@ -257,7 +285,7 @@
       <div>连接已被断开</div>
       <button
         class="syncit-btn"
-        on:click="{() => service.send('RESET')}"
+        on:click="{reset}"
         style="display: block; margin: 0.5em auto;"
       >
         重新准备
@@ -265,10 +293,6 @@
     </div>
   </div>
   {/if}
-  <!---->
-  {:catch error}
-  <div class="syncit-error syncit-center">{error.message}</div>
-  {/await}
 </div>
 
 <style>
@@ -377,6 +401,11 @@
     background: #dfe4eb;
   }
 
+  .syncit-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
   .syncit-center {
     width: 100%;
     height: 100%;
@@ -441,5 +470,9 @@
 
   .syncit-metric-line {
     flex: 1;
+  }
+
+  .align-center {
+    text-align: center;
   }
 </style>

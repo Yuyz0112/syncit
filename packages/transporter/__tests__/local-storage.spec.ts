@@ -11,6 +11,9 @@ describe('LocalTransporter', () => {
     transporter.on(TransporterEvents.MirrorReady, data => {
       results.push(data);
     });
+    transporter.on(TransporterEvents.Start, data => {
+      results.push(data);
+    });
     transporter.on(TransporterEvents.SendRecord, data => {
       results.push(data);
     });
@@ -25,6 +28,7 @@ describe('LocalTransporter', () => {
     });
     await transporter.sendSourceReady();
     await transporter.sendMirrorReady();
+    await transporter.sendStart();
     await transporter.sendRecord({ id: 1 });
     await transporter.ackRecord(1);
     await transporter.sendRemoteControl({ id: 1, action: 'scroll' });
@@ -32,6 +36,7 @@ describe('LocalTransporter', () => {
     expect(results).toEqual([
       { event: TransporterEvents.SourceReady },
       { event: TransporterEvents.MirrorReady },
+      { event: TransporterEvents.Start },
       { event: TransporterEvents.SendRecord, payload: { id: 1 } },
       { event: TransporterEvents.AckRecord, payload: 1 },
       {

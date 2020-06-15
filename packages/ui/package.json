@@ -20,6 +20,7 @@
     "@syncit/core": "^0.1.0",
     "@syncit/transporter": "^0.1.0",
     "d3-scale": "^3.2.1",
+    "nanoid": "^3.1.10",
     "sirv-cli": "^0.4.4"
   }
 }
