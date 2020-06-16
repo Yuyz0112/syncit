@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-require('./parcel-require');
+import './parcel-require';
 import Peer from 'peerjs';
 import {
   Transporter,

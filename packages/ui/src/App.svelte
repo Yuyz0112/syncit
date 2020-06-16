@@ -3,8 +3,8 @@
   import { Replayer, EventType, pack, mirror } from 'rrweb';
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
-  import { TransporterEvents } from '@syncit/transporter/lib/base';
-  import { PeerjsTransporter } from '@syncit/transporter/lib/peerjs';
+  import { TransporterEvents } from '@syncit/transporter/es/base';
+  import { PeerjsTransporter } from '@syncit/transporter/es/peerjs';
   import {
     MirrorBuffer,
     CustomEventTags,

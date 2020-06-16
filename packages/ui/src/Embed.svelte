@@ -3,8 +3,8 @@
   import { onMount, onDestroy } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
-  import { TransporterEvents } from '@syncit/transporter/lib/base';
-  import { PeerjsTransporter } from '@syncit/transporter/lib/peerjs';
+  import { TransporterEvents } from '@syncit/transporter/es/base';
+  import { PeerjsTransporter } from '@syncit/transporter/es/peerjs';
   import {
     applyMirrorAction,
     SourceBuffer,
@@ -207,13 +207,6 @@
         <div class="syncit-load-text">
           已启用，等待连接中
         </div>
-        <!-- <button
-          style="margin-top: 8px;"
-          class="syncit-btn ordinary"
-          on:click="{() => transporter.sendSourceReady()}"
-        >
-          重试
-        </button> -->
       </div>
       {:else if current.matches('connected')}
       <div class="syncit-center">

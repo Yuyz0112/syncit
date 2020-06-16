@@ -3,7 +3,7 @@
 import { createMachine, interpret, assign, EventObject } from '@xstate/fsm';
 import { Replayer, record } from 'rrweb';
 import { listenerHandler, eventWithTime } from 'rrweb/typings/types';
-import { Transporter } from '@syncit/transporter/lib/base';
+import { Transporter } from '@syncit/transporter';
 import { SourceBuffer, Chunk } from './buffer';
 import { onMirror, RemoteControlActions, CustomEventTags } from './common';
 
