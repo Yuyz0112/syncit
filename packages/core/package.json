@@ -40,6 +40,6 @@
   "dependencies": {
     "@syncit/transporter": "^0.1.0",
     "@xstate/fsm": "^1.4.0",
-    "rrweb": "/home/yanzhen/workspace/rrweb/rrweb"
+    "rrweb": "^0.8.1"
   }
 }

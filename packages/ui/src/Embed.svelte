@@ -4,7 +4,7 @@
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
   import { TransporterEvents } from '@syncit/transporter/lib/base';
-  import { AgoraRtmTransporter } from '@syncit/transporter/lib/agora-rtm';
+  import { PeerjsTransporter } from '@syncit/transporter/lib/peerjs';
   import {
     applyMirrorAction,
     SourceBuffer,
@@ -13,17 +13,20 @@
     RemoteControlActions,
     CustomEventTags,
   } from '@syncit/core';
-  import { nanoid } from 'nanoid';
+  import { customAlphabet } from 'nanoid';
   import Panel from './components/Panel.svelte';
   import Tag from './components/Tag.svelte';
   import Icon from './components/Icon.svelte';
 
+  const nanoid = customAlphabet('1234567890abcdef', 10);
   let uid = nanoid(8);
 
-  const transporter = new AgoraRtmTransporter({
-    agora_app_id: '016149b89b524ce8b88cd11320bf4dd9',
+  const transporter = new PeerjsTransporter({
     uid,
     role: 'embed',
+    peerHost: 'localhost',
+    peerPort: 9000,
+    peerPath: '/myapp',
   });
 
   let login = transporter.login();

@@ -7,7 +7,7 @@ import {
 } from './base';
 
 export type AgoraRtmTransporterOptions = {
-  agora_app_id: string;
+  agoraAppId: string;
   uid: string;
   role: 'embed' | 'app';
 };
@@ -28,8 +28,8 @@ export class AgoraRtmTransporter<T> implements Transporter<T> {
   role: AgoraRtmTransporterOptions['role'];
 
   constructor(options: AgoraRtmTransporterOptions) {
-    const { agora_app_id, uid, role } = options;
-    this.client = AgoraRTM.createInstance(agora_app_id, {
+    const { agoraAppId, uid, role } = options;
+    this.client = AgoraRTM.createInstance(agoraAppId, {
       logFilter: AgoraRTM.LOG_FILTER_ERROR,
     });
     this.uid = uid;

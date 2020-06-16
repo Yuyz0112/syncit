@@ -4,7 +4,7 @@
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
   import { TransporterEvents } from '@syncit/transporter/lib/base';
-  import { AgoraRtmTransporter } from '@syncit/transporter/lib/agora-rtm';
+  import { PeerjsTransporter } from '@syncit/transporter/lib/peerjs';
   import {
     MirrorBuffer,
     CustomEventTags,
@@ -54,15 +54,13 @@
   let open = false;
 
   function init() {
-    transporter = new AgoraRtmTransporter({
-      agora_app_id: '016149b89b524ce8b88cd11320bf4dd9',
+    transporter = new PeerjsTransporter({
       uid,
       role: 'app',
+      peerHost: 'localhost',
+      peerPort: 9000,
+      peerPath: '/myapp',
     });
-    login = (async () => {
-      await transporter.login();
-      await transporter.sendMirrorReady();
-    })();
 
     transporter.on(TransporterEvents.SourceReady, () => {
       service.send('SOURCE_READY');
@@ -123,6 +121,11 @@
     transporter.on(TransporterEvents.Stop, () => {
       service.send('STOP');
     });
+
+    login = (async () => {
+      await transporter.login();
+      await transporter.sendMirrorReady();
+    })();
   }
 
   function reset() {
