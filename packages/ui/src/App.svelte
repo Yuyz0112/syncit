@@ -199,7 +199,11 @@
     <div class="syncit-load-text syncit-hint align-center">
       <label>
         remote UID:
-        <input type="text" bind:value="{uid}" />
+        <input
+          type="text"
+          bind:value="{uid}"
+          on:keydown="{e => e.code === 'Enter' && uid && init()}"
+        />
       </label>
       <button class="syncit-btn" on:click="{init}" disabled="{!uid}">
         建立连接

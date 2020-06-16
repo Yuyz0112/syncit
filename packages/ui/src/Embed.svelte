@@ -14,6 +14,7 @@
     CustomEventTags,
   } from '@syncit/core';
   import { customAlphabet } from 'nanoid';
+  import copy from 'copy-to-clipboard';
   import Panel from './components/Panel.svelte';
   import Tag from './components/Tag.svelte';
   import Icon from './components/Icon.svelte';
@@ -128,6 +129,16 @@
     controlService.send('STOP');
   }
 
+  let copied = false;
+  function copyUid() {
+    copy(uid);
+    copied = true;
+    setTimeout(() => {
+      console.log('timeout');
+      copied = false;
+    }, 1000);
+  }
+
   onMount(() => {
     service.start();
     service.subscribe(state => {
@@ -202,7 +213,13 @@
       {:else if current.matches('ready')}
       <div class="syncit-center syncit-load-text">
         <div class="syncit-panel-meta">
-          UID: {uid}
+          {#if copied} copied!
+          <!---->
+          {:else} UID: {uid}
+          <span class="syncit-copy" on:click="{copyUid}">
+            <Icon name="copy"></Icon>
+          </span>
+          {/if}
         </div>
         <div class="syncit-load-text">
           已启用，等待连接中
@@ -361,7 +378,21 @@
   .syncit-panel-meta {
     padding-bottom: 4px;
     margin-bottom: 4px;
-    border-bottom: 1px solid rgba(235, 239, 245, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .syncit-copy {
+    cursor: pointer;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+  }
+
+  .syncit-copy:hover {
+    opacity: 0.8;
   }
 
   .syncit-block-els {
