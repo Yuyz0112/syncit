@@ -18,6 +18,7 @@
   import Panel from './components/Panel.svelte';
   import LineChart from './components/LineChart.svelte';
   import Icon from './components/Icon.svelte';
+  import { t } from './locales';
 
   let uid = '';
 
@@ -206,14 +207,14 @@
         />
       </label>
       <button class="syncit-btn" on:click="{init}" disabled="{!uid}">
-        建立连接
+        {t('app.connect')}
       </button>
     </div>
   </div>
   {:else}
   <!---->
   {#await login}
-  <div class="syncit-load-text syncit-center">初始化中...</div>
+  <div class="syncit-load-text syncit-center">{t('app.initializing')}...</div>
   {:then}
   <!---->
   {:catch error}
@@ -225,7 +226,7 @@
   {/if}
   <!---->
   {#if current.matches('waiting_first_record')}
-  <div class="syncit-load-text syncit-center">等待连接中</div>
+  <div class="syncit-load-text syncit-center">{t('app.ready')}</div>
   {:else if current.matches('connected')}
   <div class="syncit-app-control">
     {#if open}
@@ -236,7 +237,7 @@
       <Panel>
         <div class="syncit-metric">
           <div class="syncit-chart-title">
-            时延
+            {t('app.latency')}
             <span style="color: #41efc5;">
               {_latencies.length ? _latencies[_latencies.length - 1].y : '-'} ms
             </span>
@@ -247,7 +248,7 @@
         </div>
         <div class="syncit-metric">
           <div class="syncit-chart-title">
-            流量
+            {t('app.bandwidth')}
             <span style="color: #8c83ed;">
               {lastSize.value} {lastSize.unit}
             </span>
@@ -257,24 +258,24 @@
           </div>
         </div>
         <div>
-          <p>远程控制</p>
+          <p>{t('app.remoteControl')}</p>
           {#if controlCurrent.matches('not_control')}
           <button
             class="syncit-btn ordinary"
             on:click="{() => controlService.send('REQUEST')}"
           >
-            申请控制
+            {t('app.requestToControl')}
           </button>
           {:else if controlCurrent.matches('requested')}
           <button class="syncit-btn ordinary" disabled>
-            已申请
+            {t('app.requested')}
           </button>
           {:else if controlCurrent.matches('controlling')}
           <button
             class="syncit-btn ordinary"
             on:click="{() => controlService.send('STOP_CONTROL')}"
           >
-            停止控制
+            {t('app.stopControl')}
           </button>
           {/if}
         </div>
@@ -289,13 +290,13 @@
   {:else if current.matches('stopped')}
   <div class="syncit-center">
     <div class="syncit-load-text syncit-hint">
-      <div>连接已被断开</div>
+      <div>{t('app.aborted')}</div>
       <button
         class="syncit-btn"
         on:click="{reset}"
         style="display: block; margin: 0.5em auto;"
       >
-        重新准备
+        {t('app.reset')}
       </button>
     </div>
   </div>

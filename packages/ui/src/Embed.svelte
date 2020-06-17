@@ -18,6 +18,7 @@
   import Panel from './components/Panel.svelte';
   import Tag from './components/Tag.svelte';
   import Icon from './components/Icon.svelte';
+  import { t } from './locales';
 
   const nanoid = customAlphabet('1234567890abcdef', 10);
   let uid = nanoid(8);
@@ -186,14 +187,16 @@
   >
     <Panel>
       {#await login}
-      <div class="syncit-center syncit-load-text">初始化中...</div>
+      <div class="syncit-center syncit-load-text">
+        {t('embed.initializing')}...
+      </div>
       {:then}
       <!-- -->
       {#if current.matches('idle')}
       <div class="syncit-center">
         <div class="syncit-panel-control">
           <button class="syncit-btn ordinary" on:click="{handleSelectBlock}">
-            {selecting ? '取消' : '选择屏蔽区域'}
+            {selecting ? t('embed.cancel') : t('embed.selectBlockArea')}
           </button>
           <div class="syncit-block-els">
             {#each blockEls as el, idx}
@@ -201,13 +204,13 @@
               on:mouseover="{() => highlight(el)}"
               on:mouseout="{removeHighlight}"
               on:click="{() => removeBlockEl(el)}"
-              >区域-{idx + 1}
+              >{t('embed.area')}-{idx + 1}
             </Tag>
             {/each}
           </div>
         </div>
         <button class="syncit-btn" on:click="{() => service.send('START')}">
-          启用 syncit 分享
+          {t('embed.enableShare')}
         </button>
       </div>
       {:else if current.matches('ready')}
@@ -222,15 +225,16 @@
           {/if}
         </div>
         <div class="syncit-load-text">
-          已启用，等待连接中
+          {t('embed.ready')}
         </div>
       </div>
       {:else if current.matches('connected')}
       <div class="syncit-center">
         <div class="syncit-panel-control">
-          <p>镜像鼠标尺寸</p>
+          <p>{t('embed.mouseSize')}</p>
           <div class="syncit-mouses">
-            {#each ['小', '中', '大'] as size, idx}
+            {#each [t('embed.small'), t('embed.medium'), t('embed.large')] as
+            size, idx}
             <button
               class="{`syncit-mouse-${idx + 1}`} syncit-btn ordinary"
               on:click="{() => changeMouseSize(idx + 1)}"
@@ -240,13 +244,14 @@
             {/each}
           </div>
           <p>
-            远程控制：
+            {t('embed.remoteControl')}
             <!---->
-            {#if controlCurrent.matches('not_control')}未启用
+            {#if controlCurrent.matches('not_control')}{t('embed.disabled')}
             <!---->
-            {:else if controlCurrent.matches('requesting')}申请中
+            {:else if
+            controlCurrent.matches('requesting')}{t('embed.requesting')}
             <!---->
-            {:else if controlCurrent.matches('controlled')}已启用
+            {:else if controlCurrent.matches('controlled')}{t('embed.enabled')}
             <!---->
             {/if}
           </p>
@@ -255,16 +260,16 @@
             class="syncit-btn ordinary"
             on:click="{() => controlService.send('ACCEPT')}"
           >
-            允许远程控制
+            {t('embed.accept')}
           </button>
           {:else if controlCurrent.matches('controlled')}
           <button class="syncit-btn ordinary" on:click="{stopRemoteControl}">
-            终止远程控制
+            {t('embed.abortControl')}
           </button>
           {/if}
         </div>
         <button class="syncit-btn" on:click="{() => service.send('STOP')}">
-          停止分享
+          {t('embed.abort')}
         </button>
       </div>
       {/if}
