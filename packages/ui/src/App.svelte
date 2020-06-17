@@ -4,7 +4,6 @@
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
   import { TransporterEvents } from '@syncit/transporter/es/base';
-  import { PeerjsTransporter } from '@syncit/transporter/es/peerjs';
   import {
     MirrorBuffer,
     CustomEventTags,
@@ -22,12 +21,16 @@
 
   let uid = '';
 
+  export let createTransporter;
+  export let bufferMs;
+
   let transporter;
   let login;
 
   let playerDom;
   let replayer;
   const buffer = new MirrorBuffer({
+    bufferMs,
     onChunk({ data }) {
       if (
         !controlCurrent.matches('controlling') ||
@@ -55,12 +58,9 @@
   let open = false;
 
   function init() {
-    transporter = new PeerjsTransporter({
-      uid,
+    transporter = createTransporter({
       role: 'app',
-      peerHost: 'localhost',
-      peerPort: 9000,
-      peerPath: '/myapp',
+      uid,
     });
 
     transporter.on(TransporterEvents.SourceReady, () => {

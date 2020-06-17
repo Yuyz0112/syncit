@@ -41,7 +41,7 @@ export class BaseBuffer<T> {
   }
 }
 
-export type SourceBufferOptions<T> = {
+export type SourceBufferOptions<T> = BaseBufferOptions & {
   onTimeout(chunk: Chunk<T>): void;
 };
 
@@ -49,7 +49,7 @@ export class SourceBuffer<T> extends BaseBuffer<T> {
   private onTimeout: SourceBufferOptions<T>['onTimeout'];
 
   constructor(options: SourceBufferOptions<T>) {
-    super();
+    super(options);
 
     const { onTimeout } = options;
     this.onTimeout = onTimeout;
@@ -76,15 +76,15 @@ export class SourceBuffer<T> extends BaseBuffer<T> {
   }
 }
 
-export type MirrorBufferOptions<T> = {
-  onChunk<T>(chunk: Chunk<T>): void;
+export type MirrorBufferOptions<T> = BaseBufferOptions & {
+  onChunk(chunk: Chunk<T>): void;
 };
 
 export class MirrorBuffer<T> extends BaseBuffer<T> {
   private onChunk: MirrorBufferOptions<T>['onChunk'];
 
   constructor(options: MirrorBufferOptions<T>) {
-    super();
+    super(options);
 
     const { onChunk } = options;
     this.onChunk = onChunk;

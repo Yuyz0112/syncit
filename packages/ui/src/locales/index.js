@@ -32,6 +32,7 @@ const zhCN = {
       accept: '允许远程控制',
       abortControl: '终止远程控制',
       abort: '停止分享',
+      copied: '已复制',
     },
   },
 };

@@ -4,7 +4,6 @@
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
   import { TransporterEvents } from '@syncit/transporter/es/base';
-  import { PeerjsTransporter } from '@syncit/transporter/es/peerjs';
   import {
     applyMirrorAction,
     SourceBuffer,
@@ -23,12 +22,10 @@
   const nanoid = customAlphabet('1234567890abcdef', 10);
   let uid = nanoid(8);
 
-  const transporter = new PeerjsTransporter({
+  export let createTransporter;
+  const transporter = createTransporter({
     uid,
     role: 'embed',
-    peerHost: 'localhost',
-    peerPort: 9000,
-    peerPath: '/myapp',
   });
 
   let login = transporter.login();
@@ -135,7 +132,6 @@
     copy(uid);
     copied = true;
     setTimeout(() => {
-      console.log('timeout');
       copied = false;
     }, 1000);
   }
@@ -216,7 +212,7 @@
       {:else if current.matches('ready')}
       <div class="syncit-center syncit-load-text">
         <div class="syncit-panel-meta">
-          {#if copied} copied!
+          {#if copied} {t('embed.copied')}
           <!---->
           {:else} UID: {uid}
           <span class="syncit-copy" on:click="{copyUid}">

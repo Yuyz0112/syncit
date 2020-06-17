@@ -4,17 +4,23 @@ import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
+import pkg from './package.json';
 
 const production = !process.env.ROLLUP_WATCH;
 
 export default {
   input: 'src/main.js',
-  output: {
-    sourcemap: true,
-    format: 'iife',
-    name: 'app',
-    file: 'public/build/bundle.js',
-  },
+  output: [
+    { file: pkg.module, format: 'es' },
+    { file: pkg.main, format: 'cjs' },
+    { file: pkg.unpkg, format: 'iife', name: 'syncit' },
+    {
+      sourcemap: true,
+      format: 'iife',
+      name: 'syncit',
+      file: 'public/build/bundle.js',
+    },
+  ],
   plugins: [
     svelte({
       // enable run-time checks when not in production
@@ -22,6 +28,7 @@ export default {
       // we'll extract any component CSS out into
       // a separate file - better for performance
       css: css => {
+        css.write('dist/style.css');
         css.write('public/build/bundle.css');
       },
     }),

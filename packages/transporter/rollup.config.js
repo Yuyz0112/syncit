@@ -2,11 +2,15 @@ import typescript from 'rollup-plugin-typescript2';
 import { terser } from 'rollup-plugin-terser';
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
 import pkg from './package.json';
 
 const sharedConfig = {
   input: 'src/index.ts',
   plugins: [
+    replace({
+      'process.env.NODE_ENV': process.env.NODE_ENV,
+    }),
     resolve({
       browser: true,
     }),
@@ -39,7 +43,7 @@ export default [
         file: pkg.unpkg,
         format: 'iife',
         name: 'syncitTransporter',
-        plugins: [terser()],
+        plugins: sharedConfig.plugins.concat(terser()),
       },
       {
         file: pkg.module,

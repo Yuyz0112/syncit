@@ -1,11 +1,18 @@
 {
-  "name": "syncit",
+  "name": "@syncit/ui",
   "version": "0.1.0",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public"
   },
+  "main": "lib/index.js",
+  "module": "dist/index.mjs",
+  "unpkg": "dist/index.js",
+  "files": [
+    "lib",
+    "dist"
+  ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^12.0.0",
     "@rollup/plugin-node-resolve": "^8.0.0",
