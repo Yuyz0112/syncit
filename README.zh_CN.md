@@ -8,7 +8,7 @@ Syncit 的含义是 'sync it'，是一个注重隐私保护的浏览器协同工
 
 **目前 Syncit 还在早期开发阶段，API 可能随时发生变化。欢迎在 issue 中提出你的问题与需求。**
 
-[Demo 视频](http://lab.myriptide.com/syncit-demo/syncit.mp4)
+[Demo 视频](http://temp.myriptide.com/syncit.mp4)
 
 ## 指南
 

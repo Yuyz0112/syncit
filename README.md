@@ -4,13 +4,15 @@
 
 # Syncit
 
+[中文文档](./README.zh_CN.md)
+
 Syncit, which refers to 'sync it', is a privacy-first co-browsing tool. It provides pixel-perfect, low-latency, low-bandwidth screen sharing, and remote control.
 
 **Currently, Syncit is at an early development stage. During this stage, API could be changed frequently.**
 
 For better improvement, feature requests and bug reports are welcomed.
 
-[Demo video](http://lab.myriptide.com/syncit-demo/syncit.mp4)
+[Demo video](http://temp.myriptide.com/syncit.mp4)
 
 ## Guide
 
