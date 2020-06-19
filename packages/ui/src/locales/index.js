@@ -19,7 +19,7 @@ const zhCN = {
       cancel: '取消',
       selectBlockArea: '选择屏蔽区域',
       area: '区域',
-      enableShare: '启用 syncit 分享',
+      enableShare: '启用 Syncit 分享',
       ready: '已启用，等待连接中',
       mouseSize: '镜像鼠标尺寸',
       small: '小',
@@ -37,8 +37,47 @@ const zhCN = {
   },
 };
 
+const enUS = {
+  lng: 'en-US',
+  data: {
+    app: {
+      connect: 'Connect',
+      initializing: 'Initializing',
+      ready: 'Connecting',
+      latency: 'Latency',
+      bandwidth: 'Bandwidth',
+      remoteControl: 'Remote Control',
+      requestToControl: 'Request Remote Control',
+      requested: 'Remote Control Requested',
+      stopControl: 'Stop Remote Control',
+      aborted: 'Disconnected',
+      reset: 'Re-enable Syncit',
+    },
+    embed: {
+      initializing: 'Initializing',
+      cancel: 'Cancel',
+      selectBlockArea: 'Select Blocked Area',
+      area: 'Area',
+      enableShare: 'Enable Syncit',
+      ready: 'Waiting To Connect',
+      mouseSize: 'Mouse Size',
+      small: 'Small',
+      medium: 'Medium',
+      large: 'Large',
+      remoteControl: 'Remote Control:',
+      disabled: 'Disabled',
+      requesting: 'Requesting',
+      enabled: 'Enabled',
+      accept: 'Accept Remote Control',
+      abortControl: 'Abort Remote Control',
+      abort: 'Abort',
+      copied: 'Copied',
+    },
+  },
+};
+
 let currentLanguage = zhCN;
-const fallbackLanguage = zhCN;
+const fallbackLanguage = enUS;
 
 const findPartsForData = (data, parts) => {
   for (var i = 0; i < parts.length; ++i) {

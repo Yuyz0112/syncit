@@ -24,7 +24,8 @@
   "scripts": {
     "test": "jest",
     "build": "rollup --config",
-    "typings": "tsc -d --emitDeclarationOnly --declarationDir typings"
+    "typings": "tsc -d --emitDeclarationOnly --declarationDir typings",
+    "prepublish": "yarn build && yarn typings"
   },
   "bugs": {
     "url": "https://github.com/Yuyz0112/syncit/issues"

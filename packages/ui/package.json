@@ -4,7 +4,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public"
+    "start": "sirv public",
+    "prepublish": "yarn build"
   },
   "main": "lib/index.js",
   "module": "dist/index.mjs",
