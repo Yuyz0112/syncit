@@ -5,6 +5,9 @@
   "author": "Yanzhen Yu <yanzhen@smartx.com>",
   "homepage": "https://github.com/Yuyz0112/syncit#readme",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/index.js",
   "module": "es/index.js",
   "unpkg": "dist/index.js",
@@ -15,6 +18,8 @@
   },
   "files": [
     "lib",
+    "es",
+    "dist",
     "typings"
   ],
   "repository": {

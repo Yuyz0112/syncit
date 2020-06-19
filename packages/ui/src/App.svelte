@@ -472,7 +472,7 @@
     font-size: 13px;
     line-height: 20px;
     color: #3e4652;
-    width: 100px;
+    width: 150px;
     margin-right: 8px;
   }
 

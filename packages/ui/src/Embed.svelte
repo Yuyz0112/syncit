@@ -17,12 +17,13 @@
   import Panel from './components/Panel.svelte';
   import Tag from './components/Tag.svelte';
   import Icon from './components/Icon.svelte';
-  import { t } from './locales';
+  import { t, setCurrentLanguage } from './locales';
+
+  export let createTransporter;
+  export let lang;
 
   const nanoid = customAlphabet('1234567890abcdef', 10);
   let uid = nanoid(8);
-
-  export let createTransporter;
   const transporter = createTransporter({
     uid,
     role: 'embed',
@@ -137,6 +138,10 @@
   }
 
   onMount(() => {
+    if (lang) {
+      setCurrentLanguage(lang);
+    }
+
     service.start();
     service.subscribe(state => {
       current = state;
@@ -409,7 +414,7 @@
 
   .syncit-mouses {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
   }
 </style>

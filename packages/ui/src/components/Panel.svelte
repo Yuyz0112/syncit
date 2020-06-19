@@ -6,8 +6,8 @@
 
 <style>
   .syncit-panel {
-    width: 180px;
-    height: 240px;
+    width: 280px;
+    height: 340px;
     background: #fff;
     border: 1px solid #dfe4eb;
     box-shadow: 0px 8px 16px rgba(129, 138, 153, 0.18),

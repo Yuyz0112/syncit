@@ -7,6 +7,9 @@
     "start": "sirv public",
     "prepublish": "yarn build"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/index.js",
   "module": "dist/index.mjs",
   "unpkg": "dist/index.js",

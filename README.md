@@ -4,7 +4,7 @@
 
 # Syncit
 
-Syncit, whichrefers to 'sync it', is a privacy-first co-browsing tool. It provides pixel-perfect, low latency, low bandwidth screen sharing, and remote control.
+Syncit, which refers to 'sync it', is a privacy-first co-browsing tool. It provides pixel-perfect, low-latency, low-bandwidth screen sharing, and remote control.
 
 **Currently, Syncit is at an early development stage. During this stage, API could be changed frequently.**
 
