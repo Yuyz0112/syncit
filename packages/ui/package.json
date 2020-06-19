@@ -1,6 +1,6 @@
 {
   "name": "@syncit/ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -25,8 +25,8 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
-    "@syncit/core": "^0.1.0",
-    "@syncit/transporter": "^0.1.0",
+    "@syncit/core": "^0.2.0",
+    "@syncit/transporter": "^0.2.0",
     "copy-to-clipboard": "^3.3.1",
     "d3-scale": "^3.2.1",
     "nanoid": "^3.1.10",

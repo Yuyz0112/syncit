@@ -1,6 +1,6 @@
 {
   "name": "@syncit/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "syncit core modules",
   "author": "Yanzhen Yu <yanzhen@smartx.com>",
   "homepage": "https://github.com/Yuyz0112/syncit#readme",
@@ -48,7 +48,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "@syncit/transporter": "^0.1.0",
+    "@syncit/transporter": "^0.2.0",
     "@xstate/fsm": "^1.4.0",
     "rrweb": "^0.8.2",
     "rrweb-snapshot": "^0.7.27"
