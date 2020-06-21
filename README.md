@@ -14,6 +14,8 @@ For better improvement, feature requests and bug reports are welcomed.
 
 [Demo video](http://temp.myriptide.com/syncit.mp4)
 
+[A talk about Syncit (in Chinese)](https://www.bilibili.com/video/BV1iZ4y1H7ov/)
+
 ## Guide
 
 [**📚 Read Syncit guide here. 📚**](./guide.md)
@@ -22,4 +24,4 @@ For better improvement, feature requests and bug reports are welcomed.
 
 Syncit uses [rrweb](https://github.com/rrweb-io/rrweb) under the hood to record mutations in the browser, implement screen sharing and remote control over it.
 
-Please refer the [design doc](./docs/design.md) for further details.
+Please refer to the [design doc](./docs/design.md) for further details.

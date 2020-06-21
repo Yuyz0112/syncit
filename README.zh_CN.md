@@ -10,6 +10,8 @@ Syncit 的含义是 'sync it'，是一个注重隐私保护的浏览器协同工
 
 [Demo 视频](http://temp.myriptide.com/syncit.mp4)
 
+[一次关于 Syncit 的直播分享](https://www.bilibili.com/video/BV1iZ4y1H7ov/)
+
 ## 指南
 
 [**📚 Syncit 使用指南 📚**](./guide.zh_CN.md)
