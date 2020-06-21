@@ -6,6 +6,8 @@
 
 [中文文档](./README.zh_CN.md)
 
+> I have joined Github Sponsors and highly appreciate your sponsorship.
+
 Syncit, which refers to 'sync it', is a privacy-first co-browsing tool. It provides pixel-perfect, low-latency, low-bandwidth screen sharing, and remote control.
 
 **Currently, Syncit is at an early development stage. During this stage, API could be changed frequently.**
