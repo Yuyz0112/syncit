@@ -1445,6 +1445,11 @@
   resolved "https://registry.npm.taobao.org/@types/color-name/download/@types/color-name-1.1.1.tgz?cache=0&sync_timestamp=1588199741420&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fcolor-name%2Fdownload%2F%40types%2Fcolor-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
   integrity sha1-HBJhu+qhCoBVu8XYq4S3sq/IRqA=
 
+"@types/css-font-loading-module@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@types/css-font-loading-module/-/css-font-loading-module-0.0.4.tgz#94a835e27d1af444c65cba88523533c174463d64"
+  integrity sha512-ENdXf7MW4m9HeDojB2Ukbi7lYMIuQNBHVf98dbzaiG4EEJREBd6oleVAjrLRCrp7dm6CK1mmdmU9tcgF61acbw==
+
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/@types/eslint-visitor-keys/download/@types/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
@@ -1544,11 +1549,6 @@
   integrity sha1-8mB00jjgJlnjI84aE9BB7uKA4ZQ=
   dependencies:
     "@types/node" "*"
-
-"@types/smoothscroll-polyfill@^0.3.0":
-  version "0.3.1"
-  resolved "https://registry.npm.taobao.org/@types/smoothscroll-polyfill/download/@types/smoothscroll-polyfill-0.3.1.tgz#77fb3a6e116bdab4a5959122e3b8e201224dcd49"
-  integrity sha1-d/s6bhFr2rSllZEi47jiASJNzUk=
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -6800,22 +6800,21 @@ rollup@^2.3.4:
   optionalDependencies:
     fsevents "~2.1.2"
 
-rrweb-snapshot@^0.7.27:
-  version "0.7.27"
-  resolved "https://registry.npm.taobao.org/rrweb-snapshot/download/rrweb-snapshot-0.7.27.tgz#3a90bffc8dd1bb51ae6fa4eb15bb0c2707377c72"
-  integrity sha1-OpC//I3Ru1Gub6TrFbsMJwc3fHI=
+rrweb-snapshot@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/rrweb-snapshot/-/rrweb-snapshot-1.0.1.tgz#f3800f4deb434da02b6086533c5c38e23e7e796b"
+  integrity sha512-HKbfbTTDSTy4T0h/w9SubI1E5kL/qLiK08pJZRLA0MmGtqJ5nCTMtpEZXgCKMUncH3lb1rbiu+sDIoxKD+Anng==
 
-rrweb@^0.8.2:
-  version "0.8.2"
-  resolved "https://registry.npm.taobao.org/rrweb/download/rrweb-0.8.2.tgz#cf0998eb5ccf01809fe04c4596a0e4178fc2f1d9"
-  integrity sha1-zwmY61zPAYCf4ExFlqDkF4/C8dk=
+rrweb@^0.9.11:
+  version "0.9.11"
+  resolved "https://registry.npmjs.org/rrweb/-/rrweb-0.9.11.tgz#2917df2abe1be40eaa894062b6ec33083bb02212"
+  integrity sha512-0g9cUo7IGUwG0GSu0DvJPMTBVFBeIN6LJ7zR/1e9TCWgcyVUW3xJdRyZXURZkS7do5TYjcyLmwvJ4smY+vu+xA==
   dependencies:
-    "@types/smoothscroll-polyfill" "^0.3.0"
+    "@types/css-font-loading-module" "0.0.4"
     "@xstate/fsm" "^1.4.0"
     mitt "^1.1.3"
     pako "^1.0.11"
-    rrweb-snapshot "^0.7.27"
-    smoothscroll-polyfill "^0.4.3"
+    rrweb-snapshot "^1.0.1"
 
 rsvp@^4.8.4:
   version "4.8.5"
@@ -7046,11 +7045,6 @@ smart-buffer@^4.1.0:
   version "4.1.0"
   resolved "https://registry.npm.taobao.org/smart-buffer/download/smart-buffer-4.1.0.tgz#91605c25d91652f4661ea69ccf45f1b331ca21ba"
   integrity sha1-kWBcJdkWUvRmHqacz0XxszHKIbo=
-
-smoothscroll-polyfill@^0.4.3:
-  version "0.4.4"
-  resolved "https://registry.npm.taobao.org/smoothscroll-polyfill/download/smoothscroll-polyfill-0.4.4.tgz#3a259131dc6930e6ca80003e1cb03b603b69abf8"
-  integrity sha1-OiWRMdxpMObKgAA+HLA7YDtpq/g=
 
 snapdragon-node@^2.0.1:
   version "2.1.1"

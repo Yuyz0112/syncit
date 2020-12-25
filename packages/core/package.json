@@ -55,8 +55,8 @@
   "dependencies": {
     "@syncit/transporter": "^0.2.0",
     "@xstate/fsm": "^1.4.0",
-    "rrweb": "^0.8.2",
-    "rrweb-snapshot": "^0.7.27"
+    "rrweb": "^0.9.11",
+    "rrweb-snapshot": "^1.0.1"
   },
   "gitHead": "05913a8a804e221cb29affa497017bdcd52c3328"
 }
