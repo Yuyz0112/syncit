@@ -171,6 +171,10 @@ export const createEmbedService = (context: EmbedContext) => {
                 target: 'idle',
                 actions: ['stop'],
               },
+              CONNECT: {
+                target: 'connected',
+                actions: ['connect'],
+              },
             },
           },
         },
@@ -179,7 +183,11 @@ export const createEmbedService = (context: EmbedContext) => {
         actions: {
           start() {},
           connect: assign(context => {
-            const { record, buffer, transporter } = context;
+            const { record, buffer, transporter, stopRecordFn } = context;
+            // reset before connect
+            stopRecordFn?.();
+            buffer.reset();
+            // start a session
             const stopRecord = record({
               emit(event) {
                 const id = buffer.add(event);
@@ -187,14 +195,10 @@ export const createEmbedService = (context: EmbedContext) => {
               },
               inlineStylesheet: false,
             });
-            const timer = setInterval(() => {
-              record.addCustomEvent(CustomEventTags.Ping, undefined);
-            }, 5000);
             return {
               ...context,
               stopRecordFn: () => {
                 stopRecord?.();
-                clearInterval(timer);
               },
             };
           }),
