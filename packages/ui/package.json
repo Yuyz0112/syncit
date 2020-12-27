@@ -32,6 +32,7 @@
     "@syncit/transporter": "^0.2.0",
     "copy-to-clipboard": "^3.3.1",
     "d3-scale": "^3.2.1",
+    "konva": "^7.2.2",
     "nanoid": "^3.1.10",
     "rrweb": "^0.9.11",
     "sirv-cli": "^0.4.4"

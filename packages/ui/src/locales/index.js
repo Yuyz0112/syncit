@@ -24,7 +24,7 @@ export const t = (path, replacement) => {
     findPartsForData(currentLanguage.data, parts) ||
     findPartsForData(fallbackLanguage.data, parts);
   if (translation === undefined) {
-    throw new Error(`Can't find translation for ${path}`);
+    return path;
   }
 
   if (replacement) {

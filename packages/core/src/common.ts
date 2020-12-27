@@ -250,6 +250,11 @@ export const enum CustomEventTags {
   AcceptRemoteControl = 'AcceptRemoteControl',
   StopRemoteControl = 'StopRemoteControl',
   MouseSize = 'MouseSize',
+  StartPaint = 'StartPaint',
+  StartLine = 'StartLine',
+  DrawLine = 'DrawLine',
+  EndLine = 'EndLine',
+  EndPaint = 'EndPaint',
 }
 
 export type DataPoint = {

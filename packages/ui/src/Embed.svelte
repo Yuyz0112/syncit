@@ -15,6 +15,7 @@
   import { customAlphabet } from 'nanoid';
   import copy from 'copy-to-clipboard';
   import Panel from './components/Panel.svelte';
+  import Canvas from './components/Canvas.svelte';
   import Tag from './components/Tag.svelte';
   import Icon from './components/Icon.svelte';
   import { t, setCurrentLanguage } from './locales';
@@ -137,6 +138,16 @@
     }, 1000);
   }
 
+  let painting = false;
+  function togglePaint() {
+    painting = !painting;
+    if (painting) {
+      record.addCustomEvent(CustomEventTags.StartPaint);
+    } else {
+      record.addCustomEvent(CustomEventTags.EndPaint);
+    }
+  }
+
   onMount(() => {
     if (lang) {
       setCurrentLanguage(lang);
@@ -179,115 +190,6 @@
     controlService.stop();
   });
 </script>
-
-<div class="syncit-embed" bind:this="{ref}">
-  {#if open}
-  <div
-    transition:scale="{{duration: 500, opacity: 0.5, easing: quintOut}}"
-    style="transform-origin: right bottom;"
-  >
-    <Panel>
-      {#await login}
-      <div class="syncit-center syncit-load-text">
-        {t('embed.initializing')}...
-      </div>
-      {:then}
-      <!-- -->
-      {#if current.matches('idle')}
-      <div class="syncit-center">
-        <div class="syncit-panel-control">
-          <button class="syncit-btn ordinary" on:click="{handleSelectBlock}">
-            {selecting ? t('embed.cancel') : t('embed.selectBlockArea')}
-          </button>
-          <div class="syncit-block-els">
-            {#each blockEls as el, idx}
-            <Tag
-              on:mouseover="{() => highlight(el)}"
-              on:mouseout="{removeHighlight}"
-              on:click="{() => removeBlockEl(el)}"
-              >{t('embed.area')}-{idx + 1}
-            </Tag>
-            {/each}
-          </div>
-        </div>
-        <button class="syncit-btn" on:click="{() => service.send('START')}">
-          {t('embed.enableShare')}
-        </button>
-      </div>
-      {:else if current.matches('ready')}
-      <div class="syncit-center syncit-load-text">
-        <div class="syncit-panel-meta">
-          {#if copied} {t('embed.copied')}
-          <!---->
-          {:else} UID: {uid}
-          <span class="syncit-copy" on:click="{copyUid}">
-            <Icon name="copy"></Icon>
-          </span>
-          {/if}
-        </div>
-        <div class="syncit-load-text">
-          {t('embed.ready')}
-        </div>
-      </div>
-      {:else if current.matches('connected')}
-      <div class="syncit-center">
-        <div class="syncit-panel-control">
-          <p>{t('embed.mouseSize')}</p>
-          <div class="syncit-mouses">
-            {#each [t('embed.small'), t('embed.medium'), t('embed.large')] as
-            size, idx}
-            <button
-              class="{`syncit-mouse-${idx + 1}`} syncit-btn ordinary"
-              on:click="{() => changeMouseSize(idx + 1)}"
-            >
-              {size}
-            </button>
-            {/each}
-          </div>
-          <p>
-            {t('embed.remoteControl')}
-            <!---->
-            {#if controlCurrent.matches('not_control')}{t('embed.disabled')}
-            <!---->
-            {:else if
-            controlCurrent.matches('requesting')}{t('embed.requesting')}
-            <!---->
-            {:else if controlCurrent.matches('controlled')}{t('embed.enabled')}
-            <!---->
-            {/if}
-          </p>
-          {#if controlCurrent.matches('requesting')}
-          <button
-            class="syncit-btn ordinary"
-            on:click="{() => controlService.send('ACCEPT')}"
-          >
-            {t('embed.accept')}
-          </button>
-          {:else if controlCurrent.matches('controlled')}
-          <button class="syncit-btn ordinary" on:click="{stopRemoteControl}">
-            {t('embed.abortControl')}
-          </button>
-          {/if}
-        </div>
-        <button class="syncit-btn" on:click="{() => service.send('STOP')}">
-          {t('embed.abort')}
-        </button>
-      </div>
-      {/if}
-      <!---->
-      {:catch error}
-      <div class="syncit-center syncit-error">{error.message}</div>
-      {/await}
-    </Panel>
-  </div>
-  {/if}
-  <!---->
-  <button class="syncit-toggle syncit-btn" on:click="{() => open = !open}">
-    <Icon name="{open ? 'close' : 'team'}"></Icon>
-  </button>
-  <!---->
-  <div bind:this="{mask}" class="syncit-mask"></div>
-</div>
 
 <style>
   button {
@@ -418,3 +320,122 @@
     align-items: center;
   }
 </style>
+
+<div class="syncit-embed" bind:this={ref}>
+  {#if open}
+    <div
+      transition:scale={{ duration: 500, opacity: 0.5, easing: quintOut }}
+      style="transform-origin: right bottom;">
+      <Panel>
+        {#await login}
+          <div class="syncit-center syncit-load-text">
+            {t('embed.initializing')}...
+          </div>
+        {:then}
+          <!-- -->
+          {#if current.matches('idle')}
+            <div class="syncit-center">
+              <div class="syncit-panel-control">
+                <button
+                  class="syncit-btn ordinary"
+                  on:click={handleSelectBlock}>
+                  {selecting ? t('embed.cancel') : t('embed.selectBlockArea')}
+                </button>
+                <div class="syncit-block-els">
+                  {#each blockEls as el, idx}
+                    <Tag
+                      on:mouseover={() => highlight(el)}
+                      on:mouseout={removeHighlight}
+                      on:click={() => removeBlockEl(el)}>
+                      {t('embed.area')}-{idx + 1}
+                    </Tag>
+                  {/each}
+                </div>
+              </div>
+              <button class="syncit-btn" on:click={() => service.send('START')}>
+                {t('embed.enableShare')}
+              </button>
+            </div>
+          {:else if current.matches('ready')}
+            <div class="syncit-center syncit-load-text">
+              <div class="syncit-panel-meta">
+                {#if copied}
+                  {t('embed.copied')}
+                  <!---->
+                {:else}
+                  UID:
+                  {uid}
+                  <span class="syncit-copy" on:click={copyUid}>
+                    <Icon name="copy" />
+                  </span>
+                {/if}
+              </div>
+              <div class="syncit-load-text">{t('embed.ready')}</div>
+            </div>
+          {:else if current.matches('connected')}
+            <div class="syncit-center">
+              <div class="syncit-panel-control">
+                <button
+                  class="syncit-btn ordinary"
+                  on:click={togglePaint}>{painting ? t('embed.stopPaint') : t('embed.paint')}</button>
+                <p>{t('embed.mouseSize')}</p>
+                <div class="syncit-mouses">
+                  {#each [t('embed.small'), t('embed.medium'), t('embed.large')] as size, idx}
+                    <button
+                      class="{`syncit-mouse-${idx + 1}`} syncit-btn ordinary"
+                      on:click={() => changeMouseSize(idx + 1)}>
+                      {size}
+                    </button>
+                  {/each}
+                </div>
+                <p>
+                  {t('embed.remoteControl')}
+                  <!---->
+                  {#if controlCurrent.matches('not_control')}
+                    {t('embed.disabled')}
+                    <!---->
+                  {:else if controlCurrent.matches('requesting')}
+                    {t('embed.requesting')}
+                    <!---->
+                  {:else if controlCurrent.matches('controlled')}
+                    {t('embed.enabled')}
+                    <!---->
+                  {/if}
+                </p>
+                {#if controlCurrent.matches('requesting')}
+                  <button
+                    class="syncit-btn ordinary"
+                    on:click={() => controlService.send('ACCEPT')}>
+                    {t('embed.accept')}
+                  </button>
+                {:else if controlCurrent.matches('controlled')}
+                  <button
+                    class="syncit-btn ordinary"
+                    on:click={stopRemoteControl}>
+                    {t('embed.abortControl')}
+                  </button>
+                {/if}
+              </div>
+              <button class="syncit-btn" on:click={() => service.send('STOP')}>
+                {t('embed.abort')}
+              </button>
+            </div>
+          {/if}
+          <!---->
+        {:catch error}
+          <div class="syncit-center syncit-error">{error.message}</div>
+        {/await}
+      </Panel>
+    </div>
+  {/if}
+  <!---->
+  <button class="syncit-toggle syncit-btn" on:click={() => (open = !open)}>
+    <Icon name={open ? 'close' : 'team'} />
+  </button>
+  <!---->
+  <div bind:this={mask} class="syncit-mask" />
+</div>
+
+{#if painting}
+  <Canvas />
+{/if}

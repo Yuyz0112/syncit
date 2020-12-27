@@ -33,6 +33,8 @@ export const locale = {
       abortControl: 'Stop Remote Control',
       abort: 'Abort',
       copied: 'Copied',
+      paint: 'Paint',
+      stopPaint: 'Stop Paintting',
     },
   },
 };

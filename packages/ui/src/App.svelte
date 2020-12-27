@@ -17,6 +17,7 @@
   import Panel from './components/Panel.svelte';
   import LineChart from './components/LineChart.svelte';
   import Icon from './components/Icon.svelte';
+  import Canvas from './components/Canvas.svelte';
   import { t } from './locales';
 
   let uid = '';
@@ -57,6 +58,9 @@
 
   let open = false;
 
+  let painting = false;
+  let canvasEl;
+
   function init() {
     transporter = createTransporter({
       role: 'app',
@@ -69,9 +73,13 @@
         root: playerDom,
         loadTimeout: 100,
         liveMode: true,
-        insertStyleRules: ['.syncit-embed { display: none !important }'],
+        insertStyleRules: [
+          '.syncit-embed { display: none !important }',
+          '#syncit-canvas { display: none }',
+        ],
         showWarning: true,
         showDebug: true,
+        mouseTail: false,
       });
 
       controlService = createAppControlService({
@@ -118,6 +126,27 @@
       Promise.resolve().then(() => collectSize(t, JSON.stringify(event)));
       buffer.addWithCheck({ id, data: event });
       transporter.ackRecord(id);
+
+      replayer.on('custom-event', event => {
+        switch (event.data.tag) {
+          case CustomEventTags.StartPaint:
+            painting = true;
+            break;
+          case CustomEventTags.EndPaint:
+            painting = false;
+            break;
+          case CustomEventTags.StartLine:
+            canvasEl && canvasEl.startLine();
+            break;
+          case CustomEventTags.EndLine:
+            canvasEl && canvasEl.endLine();
+            break;
+          case CustomEventTags.DrawLine:
+            canvasEl && canvasEl.setPoints(event.data.payload.points);
+            break;
+          default:
+        }
+      });
     });
     transporter.on(TransporterEvents.Stop, () => {
       service.send('STOP');
@@ -190,118 +219,6 @@
     controlService.stop();
   });
 </script>
-
-<div class="syncit-app {mouseSize}">
-  <div bind:this="{playerDom}"></div>
-  {#if current.matches('idle')}
-  <!---->
-  {#if !login}
-  <div class="syncit-center">
-    <div class="syncit-load-text syncit-hint align-center">
-      <label>
-        remote UID:
-        <input
-          type="text"
-          bind:value="{uid}"
-          on:keydown="{e => e.code === 'Enter' && uid && init()}"
-        />
-      </label>
-      <button class="syncit-btn" on:click="{init}" disabled="{!uid}">
-        {t('app.connect')}
-      </button>
-    </div>
-  </div>
-  {:else}
-  <!---->
-  {#await login}
-  <div class="syncit-load-text syncit-center">{t('app.initializing')}...</div>
-  {:then}
-  <!---->
-  {:catch error}
-  <div class="syncit-error syncit-center">{error.message}</div>
-  {/await}
-  <!---->
-  {/if}
-  <!---->
-  {/if}
-  <!---->
-  {#if current.matches('waiting_first_record')}
-  <div class="syncit-load-text syncit-center">{t('app.ready')}</div>
-  {:else if current.matches('connected')}
-  <div class="syncit-app-control">
-    {#if open}
-    <div
-      transition:scale="{{duration: 500, opacity: 0.5, easing: quintOut}}"
-      style="transform-origin: right bottom;"
-    >
-      <Panel>
-        <div class="syncit-metric">
-          <div class="syncit-chart-title">
-            {t('app.latency')}
-            <span style="color: #41efc5;">
-              {_latencies.length ? _latencies[_latencies.length - 1].y : '-'} ms
-            </span>
-          </div>
-          <div class="syncit-metric-line">
-            <LineChart points="{_latencies}"></LineChart>
-          </div>
-        </div>
-        <div class="syncit-metric">
-          <div class="syncit-chart-title">
-            {t('app.bandwidth')}
-            <span style="color: #8c83ed;">
-              {lastSize.value} {lastSize.unit}
-            </span>
-          </div>
-          <div class="syncit-metric-line">
-            <LineChart points="{_sizes}" color="#8C83ED"></LineChart>
-          </div>
-        </div>
-        <div>
-          <p>{t('app.remoteControl')}</p>
-          {#if controlCurrent.matches('not_control')}
-          <button
-            class="syncit-btn ordinary"
-            on:click="{() => controlService.send('REQUEST')}"
-          >
-            {t('app.requestToControl')}
-          </button>
-          {:else if controlCurrent.matches('requested')}
-          <button class="syncit-btn ordinary" disabled>
-            {t('app.requested')}
-          </button>
-          {:else if controlCurrent.matches('controlling')}
-          <button
-            class="syncit-btn ordinary"
-            on:click="{() => controlService.send('STOP_CONTROL')}"
-          >
-            {t('app.stopControl')}
-          </button>
-          {/if}
-        </div>
-      </Panel>
-    </div>
-    {/if}
-    <!---->
-    <button class="syncit-toggle syncit-btn" on:click="{() => open = !open}">
-      <Icon name="{open ? 'close' : 'team'}"></Icon>
-    </button>
-  </div>
-  {:else if current.matches('stopped')}
-  <div class="syncit-center">
-    <div class="syncit-load-text syncit-hint">
-      <div>{t('app.aborted')}</div>
-      <button
-        class="syncit-btn"
-        on:click="{reset}"
-        style="display: block; margin: 0.5em auto;"
-      >
-        {t('app.reset')}
-      </button>
-    </div>
-  </div>
-  {/if}
-</div>
 
 <style>
   :global(body) {
@@ -484,3 +401,118 @@
     text-align: center;
   }
 </style>
+
+<div class="syncit-app {mouseSize}">
+  <div bind:this={playerDom} />
+  {#if current.matches('idle')}
+    <!---->
+    {#if !login}
+      <div class="syncit-center">
+        <div class="syncit-load-text syncit-hint align-center">
+          <label>
+            remote UID:
+            <input
+              type="text"
+              bind:value={uid}
+              on:keydown={e => e.code === 'Enter' && uid && init()} />
+          </label>
+          <button class="syncit-btn" on:click={init} disabled={!uid}>
+            {t('app.connect')}
+          </button>
+        </div>
+      </div>
+    {:else}
+      <!---->
+      {#await login}
+        <div class="syncit-load-text syncit-center">
+          {t('app.initializing')}...
+        </div>
+      {:then}
+        <!---->
+      {:catch error}
+        <div class="syncit-error syncit-center">{error.message}</div>
+      {/await}
+      <!---->
+    {/if}
+    <!---->
+  {/if}
+  <!---->
+  {#if current.matches('waiting_first_record')}
+    <div class="syncit-load-text syncit-center">{t('app.ready')}</div>
+  {:else if current.matches('connected')}
+    <div class="syncit-app-control">
+      {#if open}
+        <div
+          transition:scale={{ duration: 500, opacity: 0.5, easing: quintOut }}
+          style="transform-origin: right bottom;">
+          <Panel>
+            <div class="syncit-metric">
+              <div class="syncit-chart-title">
+                {t('app.latency')}
+                <span style="color: #41efc5;">
+                  {_latencies.length ? _latencies[_latencies.length - 1].y : '-'}
+                  ms
+                </span>
+              </div>
+              <div class="syncit-metric-line">
+                <LineChart points={_latencies} />
+              </div>
+            </div>
+            <div class="syncit-metric">
+              <div class="syncit-chart-title">
+                {t('app.bandwidth')}
+                <span style="color: #8c83ed;">
+                  {lastSize.value}
+                  {lastSize.unit}
+                </span>
+              </div>
+              <div class="syncit-metric-line">
+                <LineChart points={_sizes} color="#8C83ED" />
+              </div>
+            </div>
+            <div>
+              <p>{t('app.remoteControl')}</p>
+              {#if controlCurrent.matches('not_control')}
+                <button
+                  class="syncit-btn ordinary"
+                  on:click={() => controlService.send('REQUEST')}>
+                  {t('app.requestToControl')}
+                </button>
+              {:else if controlCurrent.matches('requested')}
+                <button class="syncit-btn ordinary" disabled>
+                  {t('app.requested')}
+                </button>
+              {:else if controlCurrent.matches('controlling')}
+                <button
+                  class="syncit-btn ordinary"
+                  on:click={() => controlService.send('STOP_CONTROL')}>
+                  {t('app.stopControl')}
+                </button>
+              {/if}
+            </div>
+          </Panel>
+        </div>
+      {/if}
+      <!---->
+      <button class="syncit-toggle syncit-btn" on:click={() => (open = !open)}>
+        <Icon name={open ? 'close' : 'team'} />
+      </button>
+    </div>
+  {:else if current.matches('stopped')}
+    <div class="syncit-center">
+      <div class="syncit-load-text syncit-hint">
+        <div>{t('app.aborted')}</div>
+        <button
+          class="syncit-btn"
+          on:click={reset}
+          style="display: block; margin: 0.5em auto;">
+          {t('app.reset')}
+        </button>
+      </div>
+    </div>
+  {/if}
+</div>
+
+{#if painting}
+  <Canvas role="slave" bind:this={canvasEl} />
+{/if}
