@@ -255,6 +255,8 @@ export const enum CustomEventTags {
   DrawLine = 'DrawLine',
   EndLine = 'EndLine',
   EndPaint = 'EndPaint',
+  OpenPDF = 'OpenPDF',
+  ClosePDF = 'ClosePDF',
 }
 
 export type DataPoint = {

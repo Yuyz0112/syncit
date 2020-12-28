@@ -1,5 +1,5 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, tick } from 'svelte';
   import { Replayer, EventType, pack, mirror } from 'rrweb';
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
@@ -18,6 +18,7 @@
   import LineChart from './components/LineChart.svelte';
   import Icon from './components/Icon.svelte';
   import Canvas from './components/Canvas.svelte';
+  import PDF from './components/PDF.svelte';
   import { t } from './locales';
 
   let uid = '';
@@ -61,6 +62,9 @@
   let painting = false;
   let canvasEl;
 
+  let sharingPDF = false;
+  let pdfEl;
+
   function init() {
     transporter = createTransporter({
       role: 'app',
@@ -74,8 +78,7 @@
         loadTimeout: 100,
         liveMode: true,
         insertStyleRules: [
-          '.syncit-embed { display: none !important }',
-          '#syncit-canvas { display: none }',
+          '.syncit-embed, #syncit-canvas, #syncit-pdf { display: none !important }',
         ],
         showWarning: true,
         showDebug: true,
@@ -103,6 +106,7 @@
         service.send('FIRST_RECORD');
       }
       if (event.type === EventType.Custom) {
+        console.log(event);
         switch (event.data.tag) {
           case CustomEventTags.Ping:
             latencies = latencies.concat({ x: t, y: Date.now() - t });
@@ -118,6 +122,15 @@
             break;
           case CustomEventTags.StopRemoteControl:
             controlService.send('STOP_CONTROL');
+            break;
+          case CustomEventTags.OpenPDF:
+            sharingPDF = true;
+            tick().then(() => {
+              pdfEl.renderPDF({ dataURI: event.data.payload.dataURI });
+            });
+            break;
+          case CustomEventTags.ClosePDF:
+            sharingPDF = false;
             break;
           default:
             break;
@@ -515,4 +528,8 @@
 
 {#if painting}
   <Canvas role="slave" bind:this={canvasEl} />
+{/if}
+
+{#if sharingPDF}
+  <PDF bind:this={pdfEl} />
 {/if}

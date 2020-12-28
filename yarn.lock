@@ -6139,6 +6139,11 @@ path-type@^3.0.0:
   dependencies:
     pify "^3.0.0"
 
+pdfjs-dist@^2.5.207:
+  version "2.5.207"
+  resolved "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-2.5.207.tgz#b5e8c19627be64269cd3fb6df3eaaf45ddffe7b6"
+  integrity sha512-xGDUhnCYPfHy+unMXCLCJtlpZaaZ17Ew3WIL0tnSgKFUZXHAPD49GO9xScyszSsQMoutNDgRb+rfBXIaX/lJbw==
+
 peerjs-js-binarypack@1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/peerjs-js-binarypack/download/peerjs-js-binarypack-1.0.1.tgz#80fa2b61c794a6b16d64253700405e476ada29be"

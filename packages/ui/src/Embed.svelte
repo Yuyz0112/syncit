@@ -16,6 +16,7 @@
   import copy from 'copy-to-clipboard';
   import Panel from './components/Panel.svelte';
   import Canvas from './components/Canvas.svelte';
+  import PDF from './components/PDF.svelte';
   import Tag from './components/Tag.svelte';
   import Icon from './components/Icon.svelte';
   import { t, setCurrentLanguage } from './locales';
@@ -146,6 +147,25 @@
     } else {
       record.addCustomEvent(CustomEventTags.EndPaint);
     }
+  }
+
+  let sharingPDF = false;
+  let pdfEl;
+  function handlePdf(event) {
+    const file = event.target.files[0];
+    sharingPDF = true;
+    const fileReader = new FileReader();
+    fileReader.onload = function () {
+      pdfEl.renderPDF({ dataURI: this.result });
+
+      record.addCustomEvent(CustomEventTags.OpenPDF, { dataURI: this.result });
+    };
+    fileReader.readAsDataURL(file);
+  }
+  function closePDF() {
+    sharingPDF = false;
+
+    record.addCustomEvent(CustomEventTags.ClosePDF);
   }
 
   onMount(() => {
@@ -378,6 +398,10 @@
                 <button
                   class="syncit-btn ordinary"
                   on:click={togglePaint}>{painting ? t('embed.stopPaint') : t('embed.paint')}</button>
+                <input
+                  type="file"
+                  on:change={handlePdf}
+                  style="overflow: hidden;display:block;width:100%;" />
                 <p>{t('embed.mouseSize')}</p>
                 <div class="syncit-mouses">
                   {#each [t('embed.small'), t('embed.medium'), t('embed.large')] as size, idx}
@@ -438,4 +462,12 @@
 
 {#if painting}
   <Canvas />
+{/if}
+
+{#if sharingPDF}
+  <PDF bind:this={pdfEl}>
+    <button class="syncit-toggle syncit-btn" on:click={closePDF}>
+      <Icon name="close" />
+    </button>
+  </PDF>
 {/if}
