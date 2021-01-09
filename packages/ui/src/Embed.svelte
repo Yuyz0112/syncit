@@ -140,13 +140,27 @@
   }
 
   let painting = false;
+  let paintingConfig = {
+    stroke: '#df4b26',
+    strokeWidth: 5,
+    mode: 'brush',
+  };
   function togglePaint() {
     painting = !painting;
     if (painting) {
       record.addCustomEvent(CustomEventTags.StartPaint);
+      record.addCustomEvent(CustomEventTags.SetPaintingConfig, {
+        config: paintingConfig,
+      });
     } else {
       record.addCustomEvent(CustomEventTags.EndPaint);
     }
+  }
+  function setPaintingConfig(key, value) {
+    paintingConfig[key] = value;
+    record.addCustomEvent(CustomEventTags.SetPaintingConfig, {
+      config: paintingConfig,
+    });
   }
 
   let sharingPDF = false;
@@ -274,6 +288,15 @@
     flex-direction: column;
   }
 
+  .syncit-painting-config {
+    border-bottom: 1px solid rgba(235, 239, 245, 0.8);
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .syncit-load-text {
     font-size: 14px;
     line-height: 22px;
@@ -296,6 +319,8 @@
   }
 
   .syncit-panel-control {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     width: 100%;
     align-items: flex-start;
@@ -398,6 +423,40 @@
                 <button
                   class="syncit-btn ordinary"
                   on:click={togglePaint}>{painting ? t('embed.stopPaint') : t('embed.paint')}</button>
+                {#if painting}
+                  <div class="syncit-painting-config">
+                    <div>
+                      <label>Stroke:</label>
+                      {paintingConfig.stroke}
+                      <input
+                        type="color"
+                        value={paintingConfig.stroke}
+                        on:change={event => setPaintingConfig('stroke', event.target.value)} />
+                    </div>
+                    <div>
+                      <label>Stroke Width:</label>
+                      {paintingConfig.strokeWidth}
+                      <input
+                        type="range"
+                        min="3"
+                        max="20"
+                        value={paintingConfig.strokeWidth}
+                        on:change={event => setPaintingConfig('strokeWidth', event.target.value)} />
+                    </div>
+                    <div>
+                      <label>Mode:</label>
+                      {paintingConfig.mode}
+                      <!-- svelte-ignore a11y-no-onchange -->
+                      <select
+                        value={paintingConfig.mode}
+                        on:change={event => setPaintingConfig('mode', event.target.value)}>
+                        <option>brush</option>
+                        <option>eraser</option>
+                        <option>highlight</option>
+                      </select>
+                    </div>
+                  </div>
+                {/if}
                 <input
                   type="file"
                   on:change={handlePdf}
@@ -461,7 +520,7 @@
 </div>
 
 {#if painting}
-  <Canvas />
+  <Canvas {...paintingConfig} />
 {/if}
 
 {#if sharingPDF}

@@ -5,6 +5,10 @@
   import { CustomEventTags } from '@syncit/core';
 
   export let role = 'master';
+  export let mode;
+  $: lineMode = ['brush', 'eraser'].includes(mode);
+  export let stroke;
+  export let strokeWidth;
 
   class Canvas {
     constructor({ width, height }) {
@@ -18,17 +22,16 @@
       this.stage.add(this.layer);
 
       this.isPainting = false;
-      this.mode = 'brush';
     }
 
     startLine() {
       this.isPainting = true;
       const pos = this.stage.getPointerPosition();
       this.lastLine = new Konva.Line({
-        stroke: '#df4b26',
-        strokeWidth: this.mode === 'brush' ? 5 : 10,
+        stroke,
+        strokeWidth,
         globalCompositeOperation:
-          this.mode === 'brush' ? 'source-over' : 'destination-out',
+          mode === 'brush' ? 'source-over' : 'destination-out',
         points: pos ? [pos.x, pos.y] : [0, 0],
       });
       this.layer.add(this.lastLine);
@@ -79,19 +82,55 @@
     canvas.drawPoints(points);
   }
 
+  export function highlight(left, top) {
+    let highlightEl = document.createElement('div');
+    Object.assign(highlightEl.style, {
+      position: 'absolute',
+      left: `${left}px`,
+      top: `${top}px`,
+      background: stroke,
+      width: `${2 * strokeWidth}px`,
+      height: `${2 * strokeWidth}px`,
+      borderRadius: `${strokeWidth}px`,
+      animation: 'syncit-highlight 1000ms ease-out',
+    });
+    ref.appendChild(highlightEl);
+    setTimeout(() => {
+      if (ref.contains(highlightEl)) {
+        ref.removeChild(highlightEl);
+      }
+    }, 1000);
+
+    if (role === 'master') {
+      record.addCustomEvent(CustomEventTags.Highlight, { left, top });
+    }
+  }
+
   onMount(() => {
     canvas = new Canvas(ref.getBoundingClientRect());
 
     if (role === 'master') {
       canvas.stage.on('mousedown touchstart', function (e) {
-        canvas.startLine();
+        if (lineMode) {
+          canvas.startLine();
+          return;
+        }
+        if (mode === 'highlight') {
+          highlight(e.evt.clientX - strokeWidth, e.evt.clientY - strokeWidth);
+        }
       });
 
       canvas.stage.on('mouseup touchend', function () {
+        if (!lineMode) {
+          return;
+        }
         canvas.endLine();
       });
 
       canvas.stage.on('mousemove touchmove', function () {
+        if (!lineMode) {
+          return;
+        }
         canvas.draw();
       });
     }
@@ -105,6 +144,21 @@
     top: 0;
     right: 0;
     bottom: 0;
+  }
+
+  @keyframes -global-syncit-highlight {
+    0% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    75% {
+      transform: scale(1.5);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
   }
 </style>
 

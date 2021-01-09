@@ -1407,6 +1407,15 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@syncit/transporter@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@syncit/transporter/-/transporter-0.2.0.tgz#2b44acd21cc57c23753608c084fb44987f3ff84d"
+  integrity sha512-c5JQ4MtR0FgmlqEtHv6jyxXVuS8DQnAmpiKvaS5Vb6dA+4ZUd/+BZ2UzZDpZnaB+wwMsf0weU4TUwWrBvSFMsQ==
+  dependencies:
+    "@syncit/core" "^0.2.0"
+    agora-rtm-sdk "^1.2.2"
+    peerjs "^1.2.0"
+
 "@types/babel__core@^7.1.7":
   version "7.1.8"
   resolved "https://registry.npm.taobao.org/@types/babel__core/download/@types/babel__core-7.1.8.tgz#057f725aca3641f49fc11c7a87a9de5ec588a5d7"

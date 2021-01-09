@@ -60,6 +60,11 @@
   let open = false;
 
   let painting = false;
+  let paintingConfig = {
+    stroke: '#df4b26',
+    strokeWidth: 5,
+    mode: 'brush',
+  };
   let canvasEl;
 
   let sharingPDF = false;
@@ -85,6 +90,37 @@
         mouseTail: false,
       });
 
+      replayer.on('custom-event', event => {
+        switch (event.data.tag) {
+          case CustomEventTags.StartPaint:
+            painting = true;
+            break;
+          case CustomEventTags.EndPaint:
+            painting = false;
+            break;
+          case CustomEventTags.SetPaintingConfig:
+            paintingConfig = event.data.payload.config;
+            break;
+          case CustomEventTags.StartLine:
+            canvasEl && canvasEl.startLine();
+            break;
+          case CustomEventTags.EndLine:
+            canvasEl && canvasEl.endLine();
+            break;
+          case CustomEventTags.DrawLine:
+            canvasEl && canvasEl.setPoints(event.data.payload.points);
+            break;
+          case CustomEventTags.Highlight:
+            canvasEl &&
+              canvasEl.highlight(
+                event.data.payload.left,
+                event.data.payload.top
+              );
+            break;
+          default:
+        }
+      });
+
       controlService = createAppControlService({
         transporter,
         replayer,
@@ -106,7 +142,6 @@
         service.send('FIRST_RECORD');
       }
       if (event.type === EventType.Custom) {
-        console.log(event);
         switch (event.data.tag) {
           case CustomEventTags.Ping:
             latencies = latencies.concat({ x: t, y: Date.now() - t });
@@ -139,27 +174,6 @@
       Promise.resolve().then(() => collectSize(t, JSON.stringify(event)));
       buffer.addWithCheck({ id, data: event });
       transporter.ackRecord(id);
-
-      replayer.on('custom-event', event => {
-        switch (event.data.tag) {
-          case CustomEventTags.StartPaint:
-            painting = true;
-            break;
-          case CustomEventTags.EndPaint:
-            painting = false;
-            break;
-          case CustomEventTags.StartLine:
-            canvasEl && canvasEl.startLine();
-            break;
-          case CustomEventTags.EndLine:
-            canvasEl && canvasEl.endLine();
-            break;
-          case CustomEventTags.DrawLine:
-            canvasEl && canvasEl.setPoints(event.data.payload.points);
-            break;
-          default:
-        }
-      });
     });
     transporter.on(TransporterEvents.Stop, () => {
       service.send('STOP');
@@ -527,7 +541,7 @@
 </div>
 
 {#if painting}
-  <Canvas role="slave" bind:this={canvasEl} />
+  <Canvas role="slave" bind:this={canvasEl} {...paintingConfig} />
 {/if}
 
 {#if sharingPDF}
