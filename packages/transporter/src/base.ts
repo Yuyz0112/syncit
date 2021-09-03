@@ -24,5 +24,5 @@ export interface Transporter<T> {
   ackRecord(id: number): Promise<void>;
   sendStop(): Promise<void>;
   sendRemoteControl(payload: unknown): Promise<void>;
-  on(event: TransporterEvents, hanlder: TransporterEventHandler): void;
+  on(event: TransporterEvents, handler: TransporterEventHandler): void;
 }
